@@ -22,6 +22,7 @@
         <script>
             const iframe = document.getElementsByTagName('iframe')[0]
             const sMsgBtn = document.getElementById('sMsgBtn')
+            const codeOutput = document.getElementById('code-output')
 
             sMsgBtn.addEventListener('click', () => {
                 iframe.contentWindow.postMessage(
@@ -29,13 +30,10 @@
                     "*"
                 )
             })
+
+            window.addEventListener("message", (event) => {
+                codeOutput.textContent = event.data 
+            });
         </script>
 </body>
 </html>
-
-In index.html:
-1. Create a basic HTML document.
-2. Add an iframe referencing iframe.html.
-3. Add a button labelled Send Message.
-4. Add a script that selects the iframe and button.
-5. When the button is clicked, send "Hello from parent" to the iframe using postMessage().

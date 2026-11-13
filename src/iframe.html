@@ -9,7 +9,14 @@
     <script>
         window.addEventListener("message", (event) => {
             console.log(event.data);
+
+            window.parent.postMessage(
+                'Message received by iframe',
+                '*'
+            )
         });
+
+        
     </script>
 </body>
 </html>
