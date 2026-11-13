@@ -6,12 +6,36 @@
     <title>Code Playground</title>
 </head>
 <body>
-    <iframe src="" frameborder="0" class="code-playground">
+<h1>Code Playground</h1>
         <div id="input-side">
-            <label for="code-input">Your code</label>
-            <input type="text" name="code-input" id="code-input">
+            <h3>Your code</h3>
+            <button type="button">Run</button>
+            <label for="code-input">JavaScript</label>
+            <textarea id="code-input"></textarea>
+
         </div>
+        <h3>Console Output</h3>
         <div class="output-side"></div>
-    </iframe>
+        <iframe src="./src/iframe.html" sandbox="allow-scripts"></iframe>
+
+        <button id='sMsgBtn' type="button">Send Message</button>
+        <script>
+            const iframe = document.getElementsByTagName('iframe')[0]
+            const sMsgBtn = document.getElementById('sMsgBtn')
+
+            sMsgBtn.addEventListener('click', () => {
+                iframe.contentWindow.postMessage(
+                    "Hello from parent",
+                    "*"
+                )
+            })
+        </script>
 </body>
 </html>
+
+In index.html:
+1. Create a basic HTML document.
+2. Add an iframe referencing iframe.html.
+3. Add a button labelled Send Message.
+4. Add a script that selects the iframe and button.
+5. When the button is clicked, send "Hello from parent" to the iframe using postMessage().
