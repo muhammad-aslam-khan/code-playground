@@ -1,22 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sandbox</title>
-</head>
-<body>
-    <script>
-        window.addEventListener("message", (event) => {
-            console.log(event.data);
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- <script src="./iframe-script.js" defer></script> -->
+		<title>Sandbox</title>
+	</head>
+	<body></body>
 
-            window.parent.postMessage(
-                'Message received by iframe',
-                '*'
-            )
-        });
+	<script>
+		window.addEventListener("message", (e) => {
+			const message = e.data;
 
-        
-    </script>
-</body>
+			if (message.type === "RUN_CODE") {
+				try {
+					const execute = new Function(message.code);
+					execute();
+
+					// eval(message.code);
+
+					window.parent.postMessage(
+						{
+							type: "EXECUTION_STATUS",
+							status: "success",
+						},
+						"*",
+					);
+
+					// console.log("Code Executed!");
+				} catch (error) {
+					// console.log("Name:", error.name);
+					// console.log("Message:", error.message);
+					// console.log("Stack:", error.stack);
+					// console.log("Line:", error.lineNumber);
+					// console.log("Column:", error.columnNumber);
+
+					const match = error.stack.match(/<anonymous>:(\d+):(\d+)/);
+
+					let location = "";
+					if (match) {
+						const line = Number(match[1] - 2);
+						const column = Number(match[2]);
+
+						location = ` (Line ${line}, Column ${column})`;
+					}
+
+					console.error(
+						`${error.name} : ${error.message}${location}`,
+					);
+					// console.log(error.stack);
+
+					window.parent.postMessage(
+						{
+							type: "EXECUTION_STATUS",
+							status: "error",
+						},
+						"*",
+					);
+				}
+			}
+		});
+
+		function sendConsoleMessage(method, args) {
+			window.parent.postMessage(
+				{
+					type: "CONSOLE_OUTPUT",
+					method: method,
+					args: args,
+				},
+				"*",
+			);
+		}
+
+		console.log = (...args) => sendConsoleMessage("log", args);
+		console.warn = (...args) => sendConsoleMessage("warn", args);
+		console.error = (...args) => sendConsoleMessage("error", args);
+	</script>
 </html>

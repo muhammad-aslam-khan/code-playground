@@ -1,39 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Playground</title>
-</head>
-<body>
-<h1>Code Playground</h1>
-        <div id="input-side">
-            <h3>Your code</h3>
-            <button type="button">Run</button>
-            <label for="code-input">JavaScript</label>
-            <textarea id="code-input"></textarea>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="./src/style.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script src="https://cdn.jsdelivr.net/npm/acorn/dist/acorn.js"></script>
+		<script src="./src/script.js" defer></script>
+		<title>Code Playground</title>
+	</head>
+	<body>
+		<h1>Code Playground</h1>
+		<div id="input-side">
+			<h3>Your code</h3>
+			<button type="button" id="run-btn">Run</button>
+			<button type="button" id="clr-console-btn">Clear Output</button>
+			<button type="button" id="clr-editor-btn">Clear Editor</button>
+			<label for="code-editor">JavaScript</label>
+			<textarea id="code-editor"></textarea>
+		</div>
+		<h3>Console Output</h3>
+		<div id="code-output"></div>
+		<iframe
+			src="./src/iframe.html"
+			sandbox="allow-scripts"
+			referrerpolicy="no-referrer"
+		></iframe>
 
-        </div>
-        <h3>Console Output</h3>
-        <div id="code-output"></div>
-        <iframe src="./src/iframe.html" sandbox="allow-scripts"></iframe>
+		<!-- <button id="sMsgBtn" type="button">Send Message</button> -->
+	</body>
+	<!-- <script>
+		const userCode = `
+let x = 10;
 
-        <button id='sMsgBtn' type="button">Send Message</button>
-        <script>
-            const iframe = document.getElementsByTagName('iframe')[0]
-            const sMsgBtn = document.getElementById('sMsgBtn')
-            const codeOutput = document.getElementById('code-output')
+function calculate() {
+    let y = ;
+    return x + y;
+}
 
-            sMsgBtn.addEventListener('click', () => {
-                iframe.contentWindow.postMessage(
-                    "Hello from parent",
-                    "*"
-                )
-            })
+calculate();
+`;
 
-            window.addEventListener("message", (event) => {
-                codeOutput.textContent = event.data 
-            });
-        </script>
-</body>
+		try {
+			acorn.parse(userCode, {
+				ecmaVersion: "latest",
+				locations: true,
+			});
+		} catch (error) {
+			console.log(error.message);
+			console.log("Error position:", error.pos);
+			console.log("Location:", error.loc);
+
+			const codeBeforeError = userCode.slice(0, error.pos);
+			const lineNumber = codeBeforeError.split("\n").length;
+
+			console.log("Editor line:", lineNumber);
+		}
+	</script> -->
 </html>
