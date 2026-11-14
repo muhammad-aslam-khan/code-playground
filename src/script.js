@@ -40,23 +40,13 @@ runBtn.addEventListener("click", () => {
 
 window.addEventListener("message", (e) => {
 	if (e.source !== iframe.contentWindow) return;
-	// console.log(e.data);
 
 	const message = e.data;
+	// console.log(message.args);
 
+	// Formatting the received data depending upon which type have been received
 	if (message.type === "CONSOLE_OUTPUT") {
-		const output = message.args
-			.map((val) => {
-				if (typeof val === "object") {
-					return JSON.stringify(val);
-				}
-
-				return String(val);
-			})
-			.join(" ");
-
-		// codeOutput.textContent += output + "\n";
-		// codeOutput.textContent += `[${message.method.toUpperCase()}] ${output}\n`;
+		const output = message.args.map((val) => formatValue(val)).join(" ");
 
 		const outputLine = document.createElement("div");
 
@@ -93,3 +83,42 @@ clrConsoleBtn.addEventListener("click", () => {
 clrEditorBtn.addEventListener("click", () => {
 	editor.value = "";
 });
+
+function formatValue(val) {
+	if (val === null) {
+		return "null";
+	} else if (val instanceof Date) {
+		return val.toString();
+	} else if (val instanceof RegExp) {
+		return `/${val.source}/${val.flags}`;
+	} else if (typeof val === "function") {
+		return `ƒ ${val.name}() { ... }`;
+	} else if (Array.isArray(val)) {
+		return `[${val.map((item) => formatValue(item)).join(", ")}]`;
+	} else if (typeof val === "object" && val.type === "function") {
+		return `ƒ ${val.name}() { ... }`;
+	} else if (typeof val === "object" && val.type === "symbol") {
+		return `Symbol(${val.description})`;
+	} else if (typeof val === "object" && val.type === "map") {
+		const mapEntries = val.entries
+			.map(
+				([key, value]) =>
+					`${formatValue(key)} => ${formatValue(value)}`,
+			)
+			.join(", ");
+		return `Map(${val.entries.length}) {${mapEntries}}`;
+	} else if (typeof val === "object" && val.type === "set") {
+		const setValues = val.values
+			.map((value) => formatValue(value))
+			.join(", ");
+		return `Set(${val.values.length}) {${setValues}}`;
+	} else if (typeof val === "object" && val.type === "error") {
+		return `${val.name}: ${val.message}`;
+	} else if (typeof val === "object" && val !== null) {
+		return `{${Object.entries(val)
+			.map(([key, value]) => `${key}: ${formatValue(value)}`)
+			.join(", ")}}`;
+	} else {
+		return String(val);
+	}
+}

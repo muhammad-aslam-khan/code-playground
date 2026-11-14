@@ -71,9 +71,54 @@
 				"*",
 			);
 		}
+		// Testing Code Start
 
-		console.log = (...args) => sendConsoleMessage("log", args);
+		// Testing code Ends
+
+		function serializeValue(val) {
+			if (typeof val === "function") {
+				return { type: "function", name: val.name };
+			} else if (typeof val === "symbol") {
+				return { type: "symbol", description: val.description };
+			} else if (Array.isArray(val)) {
+				return val.map(serializeValue);
+			} else if (val instanceof Date || val instanceof RegExp) {
+				return val;
+			} else if (val instanceof Map) {
+				const mapEntries = Array.from(val.entries()).map(
+					([key, value]) => [
+						serializeValue(key),
+						serializeValue(value),
+					],
+				);
+				return { type: "map", entries: mapEntries };
+			} else if (val instanceof Set) {
+				const setValues = Array.from(val.values()).map((value) =>
+					serializeValue(value),
+				);
+				return { type: "set", values: setValues };
+			} else if (val instanceof Error) {
+				return {
+					type: "error",
+					name: val.name,
+					message: val.message,
+					stack: val.stack,
+				};
+			} else if (typeof val === "object" && val !== null) {
+				const entries = Object.entries(val).map(([key, value]) => {
+					return [key, serializeValue(value)];
+				});
+				return Object.fromEntries(entries);
+			} else {
+				return val;
+			}
+		}
+
+		console.log = (...args) =>
+			sendConsoleMessage("log", args.map(serializeValue));
 		console.warn = (...args) => sendConsoleMessage("warn", args);
 		console.error = (...args) => sendConsoleMessage("error", args);
+
+		// Temp code below For Testing
 	</script>
 </html>
