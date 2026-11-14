@@ -2,57 +2,183 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="stylesheet" href="./src/style.css" />
+		<link rel="stylesheet" href="./style.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script src="https://cdn.jsdelivr.net/npm/acorn/dist/acorn.js"></script>
-		<script type="module" src="./src/script.js" defer></script>
-		<script type="module" src="./src/editor.js" defer></script>
+
 		<title>Code Playground</title>
 	</head>
 	<body>
-		<h1>Code Playground</h1>
-		<div id="input-side">
-			<h3>Your code</h3>
-			<button type="button" id="run-btn">Run</button>
-			<button type="button" id="clr-console-btn">Clear Output</button>
-			<button type="button" id="clr-editor-btn">Clear Editor</button>
-			<label for="code-editor">JavaScript</label>
-			<div id="code-editor"></div>
-		</div>
-		<h3>Console Output</h3>
-		<div id="code-output"></div>
+		<header id="app-header">
+			<h1>Code Playground</h1>
+
+			<div id="toolbar">
+				<div id="view-controls">
+					<button id="toggle-explorer-btn" type="button">
+						Hide Explorer
+					</button>
+
+					<button id="toggle-workspace-btn" type="button">
+						Hide Workspace
+					</button>
+
+					<button id="toggle-preview-btn" type="button">
+						Hide Preview
+					</button>
+
+					<button id="toggle-console-btn" type="button">
+						Hide Console
+					</button>
+				</div>
+
+				<div id="action-controls">
+					<button id="run-btn" type="button">Run</button>
+					<button id="clr-editor-btn" type="button">
+						Clear Editor
+					</button>
+					<button id="clr-console-btn" type="button">
+						Clear Console
+					</button>
+				</div>
+			</div>
+		</header>
+
+		<main id="workspace">
+			<!-- Left workspace -->
+			<section id="left-panel">
+				<!-- File Explorer -->
+				<aside id="file-explorer">
+					<div id="explorer-header">
+						<h3>Explorer</h3>
+						<div id="explorer-actions">
+							<button type="button" title="New File">+</button>
+							<button type="button" title="New Folder">📁</button>
+						</div>
+					</div>
+
+					<div id="file-tree">
+						<div class="project-root">
+							<div class="tree-item folder" data-folder="root">
+								<span class="folder-arrow">▾</span>
+								<span>MAK Playground</span>
+							</div>
+
+							<div class="folder-contents">
+								<div
+									class="tree-item file"
+									data-file="index.html"
+								>
+									<span>📄 index.html</span>
+								</div>
+
+								<div class="tree-item folder" data-folder="css">
+									<span class="folder-arrow">▾</span>
+									<span>css</span>
+								</div>
+
+								<div class="folder-contents">
+									<div
+										class="tree-item file"
+										data-file="css/style.css"
+									>
+										<span>📄 style.css</span>
+									</div>
+
+									<div
+										class="tree-item file"
+										data-file="css/responsive.css"
+									>
+										<span>📄 responsive.css</span>
+									</div>
+								</div>
+
+								<div class="tree-item folder" data-folder="js">
+									<span class="folder-arrow">▾</span>
+									<span>js</span>
+								</div>
+
+								<div class="folder-contents">
+									<div
+										class="tree-item file"
+										data-file="js/script.js"
+									>
+										<span>📄 script.js</span>
+									</div>
+
+									<div
+										class="tree-item file"
+										data-file="js/utils.js"
+									>
+										<span>📄 utils.js</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</aside>
+
+				<!-- Explorer Divider -->
+				<div id="explorer-divider"></div>
+
+				<!-- Editor workspace -->
+				<section id="editor-panel">
+					<div id="editor-tabs">
+						<button type="button" class="editor-tab active">
+							index.html
+						</button>
+						<button type="button" class="editor-tab">
+							style.css
+						</button>
+						<button type="button" class="editor-tab">
+							script.js
+						</button>
+					</div>
+
+					<div id="code-editor"></div>
+				</section>
+			</section>
+
+			<!-- Divider -->
+			<div id="main-divider"></div>
+
+			<!-- Right workspace -->
+			<section id="right-panel">
+				<!-- Preview -->
+				<section id="preview-panel">
+					<h3>Preview</h3>
+					<iframe
+						id="preview-frame"
+						title="Live Preview"
+						sandbox="allow-scripts"
+					></iframe>
+				</section>
+
+				<!-- Divider -->
+				<div id="preview-console-divider"></div>
+
+				<!-- Console -->
+				<section id="console-panel">
+					<div id="console-header">
+						<h3>Console Output</h3>
+						<button id="clr-console-btn" type="button">
+							Clear
+						</button>
+					</div>
+
+					<div id="code-output"></div>
+				</section>
+			</section>
+		</main>
+
 		<iframe
+			id="execution-frame"
 			src="./src/iframe.html"
 			sandbox="allow-scripts"
 			referrerpolicy="no-referrer"
+			hidden
 		></iframe>
+
+		<script type="module" src="./script.js"></script>
+		<script type="module" src="./src/editor.js" defer></script>
 	</body>
-	<!-- <script>
-		const userCode = `
-let x = 10;
-
-function calculate() {
-    let y = ;
-    return x + y;
-}
-
-calculate();
-`;
-
-		try {
-			acorn.parse(userCode, {
-				ecmaVersion: "latest",
-				locations: true,
-			});
-		} catch (error) {
-			console.log(error.message);
-			console.log("Error position:", error.pos);
-			console.log("Location:", error.loc);
-
-			const codeBeforeError = userCode.slice(0, error.pos);
-			const lineNumber = codeBeforeError.split("\n").length;
-
-			console.log("Editor line:", lineNumber);
-		}
-	</script> -->
 </html>

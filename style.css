@@ -1,0 +1,202 @@
+#code-output {
+	white-space: pre-wrap;
+}
+
+.console-line {
+	padding: 3px 8px;
+	border-bottom: 1px solid #333;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.console-line.log {
+	/* color: #e0e0e0; */
+}
+
+.console-line.warn {
+	color: #f0b429;
+	background-color: #332b16;
+}
+
+.console-line.error {
+	color: #ff6b6b;
+	background-color: #351b1b;
+}
+
+/* Basic page layout */
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	font-family: Arial, sans-serif;
+}
+
+.hidden {
+	/* FOr hiding components, button, sections etc */
+	display: none !important;
+}
+
+/* Header */
+#app-header {
+	height: 55px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 16px;
+	border-bottom: 1px solid #ccc;
+}
+
+#toolbar {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 5px;
+}
+
+#view-controls,
+#action-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Main workspace */
+#workspace {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+}
+
+/* Left and right panels */
+#left-panel,
+#right-panel {
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	width: 50%;
+	flex: 1;
+}
+
+#right-panel {
+	/* flex: 1; */
+	flex-direction: column;
+}
+
+/* Explorer and editor */
+#file-explorer {
+	width: 200px;
+	min-width: 150px;
+	flex-shrink: 0;
+	padding: 10px;
+	border-right: 1px solid #ccc;
+}
+
+#editor-panel {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Editor tabs */
+#editor-tabs {
+	display: flex;
+	flex-shrink: 0;
+	gap: 4px;
+	padding: 6px;
+	border-bottom: 1px solid #ccc;
+}
+
+#code-editor {
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+}
+
+/* Preview and console */
+#preview-panel,
+#console-panel {
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+#preview-panel {
+	flex: 2;
+	min-height: 0;
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+	overflow: hidden;
+}
+
+#preview-panel h3 {
+	flex-shrink: 0;
+	margin: 0 0 10px;
+}
+
+#preview-frame {
+	display: block;
+	width: 100%;
+	flex: 1;
+	height: 0;
+	min-height: 0;
+	border: 1px solid #ccc;
+}
+
+#console-panel {
+	flex: 1;
+	padding: 10px;
+}
+
+#console-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+#code-output {
+	flex: 1;
+	overflow: auto;
+}
+
+/* Code & Preview Divider */
+#main-divider {
+	width: 5px;
+	flex-shrink: 0;
+	background: #ddd;
+	cursor: col-resize;
+}
+
+#main-divider:hover {
+	background: #999;
+}
+
+/* Explorer Divider */
+#explorer-divider {
+	width: 5px;
+	flex-shrink: 0;
+	background: #ddd;
+	cursor: col-resize;
+}
+
+#explorer-divider:hover {
+	background: #999;
+}
+
+/* Preview & Console Divider */
+#preview-console-divider {
+	height: 5px;
+	flex-shrink: 0;
+	background: #ddd;
+	cursor: row-resize;
+}
+
+#preview-console-divider:hover {
+	background: #999;
+}

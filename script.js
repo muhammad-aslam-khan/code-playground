@@ -1,14 +1,12 @@
-import { editor } from "./editor.js";
+import { editor } from "./src/editor.js";
+import "./src/layout.js";
 
-// const editor = document.getElementById("code-editor");
-const runBtn = document.getElementById("run-btn");
-const clrConsoleBtn = document.getElementById("clr-console-btn");
-const clrEditorBtn = document.getElementById("clr-editor-btn");
+const runBtn = document.querySelector("#run-btn");
+const clrConsoleBtn = document.querySelector("#clr-console-btn");
+const clrEditorBtn = document.querySelector("#clr-editor-btn");
 
-const iframe = document.querySelector("iframe");
-
+const iframe = document.querySelector("#execution-frame");
 const codeOutput = document.getElementById("code-output");
-
 const promiseOutputLines = new Map();
 
 runBtn.addEventListener("click", () => {
