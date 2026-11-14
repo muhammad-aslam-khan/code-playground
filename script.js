@@ -1,5 +1,6 @@
 import { editor } from "./src/editor.js";
 import "./src/layout.js";
+import "./src/explorer.js";
 
 const runBtn = document.querySelector("#run-btn");
 const clrConsoleBtn = document.querySelector("#clr-console-btn");

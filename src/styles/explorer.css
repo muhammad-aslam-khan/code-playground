@@ -1,0 +1,82 @@
+/* Folder Explorer Section */
+/* Explorer header */
+#explorer-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+#explorer-header h3 {
+	margin: 0;
+}
+
+#explorer-actions {
+	display: flex;
+	gap: 4px;
+}
+
+#explorer-actions button {
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-size: 16px;
+	padding: 4px 6px;
+}
+
+#explorer-actions button:hover {
+	background: #ddd;
+}
+
+/* File tree */
+#file-tree {
+	padding-top: 8px;
+	overflow: auto;
+}
+
+.tree-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 6px;
+	cursor: pointer;
+	white-space: nowrap;
+	user-select: none;
+}
+
+.tree-item:hover {
+	background: #e8e8e8;
+}
+
+.tree-item.file {
+	padding-left: 22px;
+}
+
+.folder-arrow {
+	display: inline-block;
+	width: 12px;
+	font-size: 11px;
+}
+
+/* Nested folder contents */
+.folder-contents {
+	padding-left: 14px;
+}
+
+.folder-contents.collapsed {
+	display: none;
+}
+
+.folder-arrow {
+	transition: transform 0.15s ease;
+}
+
+.folder-arrow.collapsed {
+	transform: rotate(-90deg);
+}
+
+.tree-item.file.active {
+	background: #d6e8ff;
+	color: #1a4f85;
+}
