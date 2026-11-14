@@ -1,17 +1,21 @@
-const editor = document.getElementById("code-editor");
+import { editor } from "./editor.js";
+
+// const editor = document.getElementById("code-editor");
 const runBtn = document.getElementById("run-btn");
 const clrConsoleBtn = document.getElementById("clr-console-btn");
 const clrEditorBtn = document.getElementById("clr-editor-btn");
 
 const iframe = document.querySelector("iframe");
 
-const sMsgBtn = document.getElementById("sMsgBtn");
 const codeOutput = document.getElementById("code-output");
+
+const promiseOutputLines = new Map();
 
 runBtn.addEventListener("click", () => {
 	codeOutput.textContent = "";
 
-	const userCode = editor.value;
+	// const userCode = editor.value;
+	const userCode = editor.state.doc.toString();
 
 	// First, check JavaScript syntax
 	try {
@@ -54,6 +58,12 @@ window.addEventListener("message", (e) => {
 		outputLine.textContent = output;
 
 		codeOutput.appendChild(outputLine);
+
+		message.args.forEach((val) => {
+			if (val && typeof val === "object" && val.type === "promise") {
+				promiseOutputLines.set(val.id, outputLine);
+			}
+		});
 	} else if (message.type === "EXECUTION_STATUS") {
 		const statusLine = document.createElement("div");
 		statusLine.classList.add("console-line");
@@ -66,22 +76,36 @@ window.addEventListener("message", (e) => {
 		}
 
 		codeOutput.appendChild(statusLine);
+	} else if (message.type === "PROMISE_UPDATE") {
+		const outputLine = promiseOutputLines.get(message.id);
+
+		if (outputLine) {
+			const result = formatValue(message.value);
+			outputLine.textContent = `Promise {<${message.status}>: ${result}}`;
+			promiseOutputLines.delete(message.id);
+		}
 	}
 });
 
-editor.addEventListener("keydown", (e) => {
-	if (e.ctrlKey && e.key === "Enter") {
-		e.preventDefault(); // This prevents the browser's default Ctrl+Enter behavior, if any.
-		runBtn.click();
-	}
+// editor.addEventListener("keydown", (e) => {
+// 	if (e.ctrlKey && e.key === "Enter") {
+// 		e.preventDefault(); // This prevents the browser's default Ctrl+Enter behavior, if any.
+// 		runBtn.click();
+// 	}
+// });
+
+clrEditorBtn.addEventListener("click", () => {
+	editor.dispatch({
+		changes: {
+			from: 0,
+			to: editor.state.doc.length,
+			insert: "",
+		},
+	});
 });
 
 clrConsoleBtn.addEventListener("click", () => {
 	codeOutput.textContent = "";
-});
-
-clrEditorBtn.addEventListener("click", () => {
-	editor.value = "";
 });
 
 function formatValue(val) {
@@ -114,6 +138,12 @@ function formatValue(val) {
 		return `Set(${val.values.length}) {${setValues}}`;
 	} else if (typeof val === "object" && val.type === "error") {
 		return `${val.name}: ${val.message}`;
+	} else if (typeof val === "object" && val.type === "weakmap") {
+		return "WeakMap {}";
+	} else if (typeof val === "object" && val.type === "weakset") {
+		return "WeakSet {}";
+	} else if (val.type === "promise") {
+		return "Promise {<pending>}";
 	} else if (typeof val === "object" && val !== null) {
 		return `{${Object.entries(val)
 			.map(([key, value]) => `${key}: ${formatValue(value)}`)

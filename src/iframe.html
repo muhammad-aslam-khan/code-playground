@@ -71,9 +71,18 @@
 				"*",
 			);
 		}
-		// Testing Code Start
 
-		// Testing code Ends
+		function sendPromiseUpdate(id, status, value) {
+			window.parent.postMessage(
+				{
+					type: "PROMISE_UPDATE",
+					id: id,
+					status: status,
+					value: serializeValue(value),
+				},
+				"*",
+			);
+		}
 
 		function serializeValue(val) {
 			if (typeof val === "function") {
@@ -104,6 +113,23 @@
 					message: val.message,
 					stack: val.stack,
 				};
+			} else if (val instanceof WeakMap) {
+				return { type: "weakmap" };
+			} else if (val instanceof WeakSet) {
+				return { type: "weakset" };
+			} else if (val instanceof Promise) {
+				const promiseId = crypto.randomUUID();
+				val.then(
+					(value) => {
+						// Tells parent that Promise fulfilled
+						sendPromiseUpdate(promiseId, "fulfilled", value);
+					},
+					(reason) => {
+						// Tells parent that Promise rejected
+						sendPromiseUpdate(promiseId, "rejected", reason);
+					},
+				);
+				return { type: "promise", id: promiseId };
 			} else if (typeof val === "object" && val !== null) {
 				const entries = Object.entries(val).map(([key, value]) => {
 					return [key, serializeValue(value)];
@@ -116,8 +142,10 @@
 
 		console.log = (...args) =>
 			sendConsoleMessage("log", args.map(serializeValue));
-		console.warn = (...args) => sendConsoleMessage("warn", args);
-		console.error = (...args) => sendConsoleMessage("error", args);
+		console.warn = (...args) =>
+			sendConsoleMessage("warn", args.map(serializeValue));
+		console.error = (...args) =>
+			sendConsoleMessage("error", args.map(serializeValue));
 
 		// Temp code below For Testing
 	</script>

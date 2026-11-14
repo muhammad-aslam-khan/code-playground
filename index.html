@@ -5,7 +5,8 @@
 		<link rel="stylesheet" href="./src/style.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script src="https://cdn.jsdelivr.net/npm/acorn/dist/acorn.js"></script>
-		<script src="./src/script.js" defer></script>
+		<script type="module" src="./src/script.js" defer></script>
+		<script type="module" src="./src/editor.js" defer></script>
 		<title>Code Playground</title>
 	</head>
 	<body>
@@ -16,7 +17,7 @@
 			<button type="button" id="clr-console-btn">Clear Output</button>
 			<button type="button" id="clr-editor-btn">Clear Editor</button>
 			<label for="code-editor">JavaScript</label>
-			<textarea id="code-editor"></textarea>
+			<div id="code-editor"></div>
 		</div>
 		<h3>Console Output</h3>
 		<div id="code-output"></div>
@@ -25,8 +26,6 @@
 			sandbox="allow-scripts"
 			referrerpolicy="no-referrer"
 		></iframe>
-
-		<!-- <button id="sMsgBtn" type="button">Send Message</button> -->
 	</body>
 	<!-- <script>
 		const userCode = `
