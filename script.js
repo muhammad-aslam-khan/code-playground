@@ -8,6 +8,7 @@ import { installConsoleBridge } from "./src/console-bridge.js";
 // updatePreview(); // Renders the preview if we have code in our project when page loads
 // console.log(projectFiles);
 
+const executionMode = document.querySelector("#execution-mode");
 const runBtn = document.querySelector("#run-btn");
 const clrConsoleBtn = document.querySelector("#clr-console-btn");
 const clrEditorBtn = document.querySelector("#clr-editor-btn");
@@ -30,30 +31,35 @@ runBtn.addEventListener("click", () => {
 
 	const userCode = editor.state.doc.toString();
 
-	// Check JavaScript syntax
-	try {
-		acorn.parse(userCode, {
-			ecmaVersion: "latest",
-			locations: true,
-		});
-	} catch (error) {
-		const outputLine = document.createElement("div");
-		outputLine.classList.add("console-line", "error");
+	if (executionMode.value === "javascript") {
+		// Check JavaScript syntax
+		try {
+			acorn.parse(userCode, {
+				ecmaVersion: "latest",
+				locations: true,
+			});
+		} catch (error) {
+			const outputLine = document.createElement("div");
+			outputLine.classList.add("console-line", "error");
 
-		outputLine.textContent = `SyntaxError: ${error.message} (Line ${error.loc.line}, Column ${error.loc.column + 1})`;
+			outputLine.textContent = `SyntaxError: ${error.message} (Line ${error.loc.line}, Column ${error.loc.column + 1})`;
 
-		codeOutput.appendChild(outputLine);
-		return;
+			codeOutput.appendChild(outputLine);
+			return;
+		}
+
+		// Execute standalone JavaScript
+		jsFrame.contentWindow.postMessage(
+			{
+				type: "RUN_CODE",
+				code: userCode,
+			},
+			"*",
+		);
+	} else if (executionMode.value === "project") {
+		// Render the complete Web Project
+		updatePreview();
 	}
-
-	// Execute JavaScript in the standalone runner
-	jsFrame.contentWindow.postMessage(
-		{
-			type: "RUN_CODE",
-			code: userCode,
-		},
-		"*",
-	);
 });
 
 /*// runBtn.addEventListener("click", () => {
@@ -230,3 +236,18 @@ function formatValue(val) {
 }
 
 // Temp test code below
+
+/* Run button work flow
+			Run Button
+				|
+		Execution Mode
+			/          \
+JavaScript          Web Project
+		|                   |
+	Acorn             updatePreview()
+		|                   |
+	jsFrame             previewFrame
+		\                   /
+		Shared Console
+
+----------------------*/
