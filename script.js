@@ -2,24 +2,35 @@ import { editor } from "./src/editor.js";
 import { projectFiles } from "./src/project.js";
 import "./src/layout.js";
 import "./src/explorer.js";
+import { updatePreview } from "./src/preview.js";
+import { installConsoleBridge } from "./src/console-bridge.js";
 
-console.log(projectFiles);
+// updatePreview(); // Renders the preview if we have code in our project when page loads
+// console.log(projectFiles);
 
 const runBtn = document.querySelector("#run-btn");
 const clrConsoleBtn = document.querySelector("#clr-console-btn");
 const clrEditorBtn = document.querySelector("#clr-editor-btn");
 
-const iframe = document.querySelector("#execution-frame");
+const jsFrame = document.querySelector("#execution-frame"); // The iframe to run JS code only
+const previewFrame = document.getElementById("preview-frame"); // The iframe of preview section
 const codeOutput = document.getElementById("code-output");
 const promiseOutputLines = new Map();
+
+/******************************
+// previewFrame: runs the complete HTML/CSS/JS project.
+// jsFrame: remains available for the standalone JavaScript playground.
+// console-bridge.js: provides the shared console serialization and messaging logic.
+// Parent message listener: accepts messages from both frames.
+// Current Run button: calls updatePreview() only.
+******************************/
 
 runBtn.addEventListener("click", () => {
 	codeOutput.textContent = "";
 
-	// const userCode = editor.value;
 	const userCode = editor.state.doc.toString();
 
-	// First, check JavaScript syntax
+	// Check JavaScript syntax
 	try {
 		acorn.parse(userCode, {
 			ecmaVersion: "latest",
@@ -30,12 +41,13 @@ runBtn.addEventListener("click", () => {
 		outputLine.classList.add("console-line", "error");
 
 		outputLine.textContent = `SyntaxError: ${error.message} (Line ${error.loc.line}, Column ${error.loc.column + 1})`;
-		codeOutput.appendChild(outputLine);
 
+		codeOutput.appendChild(outputLine);
 		return;
 	}
 
-	iframe.contentWindow.postMessage(
+	// Execute JavaScript in the standalone runner
+	jsFrame.contentWindow.postMessage(
 		{
 			type: "RUN_CODE",
 			code: userCode,
@@ -44,11 +56,69 @@ runBtn.addEventListener("click", () => {
 	);
 });
 
+/*// runBtn.addEventListener("click", () => {
+// 	codeOutput.textContent = "";
+
+// 	updatePreview(); // Rendering the preview
+
+// 	// // const userCode = editor.value;
+// 	// const userCode = editor.state.doc.toString();
+
+// 	// // First, check JavaScript syntax
+// 	// try {
+// 	// 	acorn.parse(userCode, {
+// 	// 		ecmaVersion: "latest",
+// 	// 		locations: true,
+// 	// 	});
+// 	// } catch (error) {
+// 	// 	const outputLine = document.createElement("div");
+// 	// 	outputLine.classList.add("console-line", "error");
+
+// 	// 	outputLine.textContent = `SyntaxError: ${error.message} (Line ${error.loc.line}, Column ${error.loc.column + 1})`;
+// 	// 	codeOutput.appendChild(outputLine);
+
+// 	// 	return;
+// 	// }
+
+// 	// jsFrame.contentWindow.postMessage(
+// 	// 	{
+// 	// 		type: "RUN_CODE",
+// 	// 		code: userCode,
+// 	// 	},
+// 	// 	"*",
+// 	// );
+// });
+*/
+
+// Our main web page (parent) message eventhandler
 window.addEventListener("message", (e) => {
-	if (e.source !== iframe.contentWindow) return;
+	// If message is not from either one of these iframes, return
+	if (
+		e.source !== jsFrame.contentWindow &&
+		e.source !== previewFrame.contentWindow
+	)
+		return;
 
 	const message = e.data;
 	// console.log(message.args);
+
+	// This let the JS-iframe install the bridge itself after it loads
+	// and is ready. Meaning, This tells the parent to send the shared
+	// bridge function only when the standalone JavaScript iframe
+	// announces that it is ready.
+	if (message.type === "IFRAME_READY") {
+		if (e.source === jsFrame.contentWindow) {
+			jsFrame.contentWindow.postMessage(
+				{
+					type: "INSTALL_CONSOLE_BRIDGE",
+					code: installConsoleBridge.toString(),
+				},
+				"*",
+			);
+		}
+
+		return;
+	}
 
 	// Formatting the received data depending upon which type have been received
 	if (message.type === "CONSOLE_OUTPUT") {
@@ -88,6 +158,17 @@ window.addEventListener("message", (e) => {
 		}
 	}
 });
+
+/******************************
+This cove structure below covers both possibilities:
+- The iframe loads after the parent listener is ready.
+- The iframe has already loaded before the parent listener is ready.
+******************************/
+function notifyJsFrame() {
+	jsFrame.contentWindow.postMessage({ type: "PARENT_READY" }, "*");
+}
+jsFrame.addEventListener("load", notifyJsFrame);
+notifyJsFrame(); // Also send once in case the iframe has already loaded.
 
 clrEditorBtn.addEventListener("click", () => {
 	editor.dispatch({
@@ -147,3 +228,5 @@ function formatValue(val) {
 		return String(val);
 	}
 }
+
+// Temp test code below

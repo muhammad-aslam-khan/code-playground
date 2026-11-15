@@ -9,8 +9,30 @@
 	<body></body>
 
 	<script>
+		// Console bridge will be installed here.
+
+		// /*
+		// Previous Code below, will be removed eventually
 		window.addEventListener("message", (e) => {
 			const message = e.data;
+
+			if (message.type === "PARENT_READY") {
+				window.parent.postMessage({ type: "IFRAME_READY" }, "*");
+
+				return;
+			}
+
+			if (message.type === "INSTALL_CONSOLE_BRIDGE") {
+				if (e.source !== window.parent) return;
+
+				const bridgeScript = document.createElement("script");
+
+				bridgeScript.textContent = `(${message.code})();`;
+
+				document.head.appendChild(bridgeScript);
+
+				return;
+			}
 
 			if (message.type === "RUN_CODE") {
 				try {
@@ -61,17 +83,10 @@
 			}
 		});
 
-		function sendConsoleMessage(method, args) {
-			window.parent.postMessage(
-				{
-					type: "CONSOLE_OUTPUT",
-					method: method,
-					args: args,
-				},
-				"*",
-			);
-		}
+		// This tells the parent that JS-Iframe is ready and it sends the console-bridge
+		// initializer code which is required before to intercept any user JS code in the project
 
+		/*
 		function sendPromiseUpdate(id, status, value) {
 			window.parent.postMessage(
 				{
@@ -140,13 +155,24 @@
 			}
 		}
 
+		function sendConsoleMessage(method, args) {
+			window.parent.postMessage(
+				{
+					type: "CONSOLE_OUTPUT",
+					method: method,
+					args: args,
+				},
+				"*",
+			);
+		}
+
 		console.log = (...args) =>
 			sendConsoleMessage("log", args.map(serializeValue));
 		console.warn = (...args) =>
 			sendConsoleMessage("warn", args.map(serializeValue));
 		console.error = (...args) =>
 			sendConsoleMessage("error", args.map(serializeValue));
-
+		*/
 		// Temp code below For Testing
 	</script>
 </html>

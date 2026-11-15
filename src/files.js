@@ -13,9 +13,7 @@ export function openFile(filePath) {
 	if (!selectedFile) return;
 
 	// Save the previously active file
-	if (activeFilePath && projectFiles[activeFilePath]) {
-		projectFiles[activeFilePath].content = editor.state.doc.toString();
-	}
+	saveActiveFile();
 
 	// Update active file
 	activeFilePath = filePath;
@@ -96,3 +94,9 @@ document.addEventListener("tab-open", (event) => {
 document.addEventListener("tab-close", (event) => {
 	closeFile(event.detail.filePath);
 });
+
+export function saveActiveFile() {
+	if (!activeFilePath) return;
+
+	projectFiles[activeFilePath].content = editor.state.doc.toString();
+}
