@@ -1,3 +1,6 @@
+import { openFile } from "./files.js";
+
+// Folder expand/collapse
 const folders = document.querySelectorAll("#file-tree .tree-item.folder");
 
 folders.forEach((folder) => {
@@ -10,16 +13,31 @@ folders.forEach((folder) => {
 	});
 });
 
+// File selection
 const files = document.querySelectorAll("#file-tree .tree-item.file");
 
 files.forEach((file) => {
 	file.addEventListener("click", () => {
-		document
-			.querySelectorAll("#file-tree .tree-item.file")
-			.forEach((item) => item.classList.remove("active"));
+		openFile(file.dataset.file);
+	});
+});
 
-		file.classList.add("active");
+// Update Explorer selection when a file opens
+document.addEventListener("file-opened", (event) => {
+	const filePath = event.detail.filePath;
 
-		console.log("Selected file:", file.dataset.file);
+	document.querySelectorAll("#file-tree .tree-item.file").forEach((item) => {
+		item.classList.remove("active");
+	});
+
+	document
+		.querySelector(`#file-tree .tree-item.file[data-file="${filePath}"]`)
+		?.classList.add("active");
+});
+
+// Clear Explorer selection when all tabs close
+document.addEventListener("file-closed-all", () => {
+	document.querySelectorAll("#file-tree .tree-item.file").forEach((item) => {
+		item.classList.remove("active");
 	});
 });

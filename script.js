@@ -1,6 +1,9 @@
 import { editor } from "./src/editor.js";
+import { projectFiles } from "./src/project.js";
 import "./src/layout.js";
 import "./src/explorer.js";
+
+console.log(projectFiles);
 
 const runBtn = document.querySelector("#run-btn");
 const clrConsoleBtn = document.querySelector("#clr-console-btn");
@@ -85,13 +88,6 @@ window.addEventListener("message", (e) => {
 		}
 	}
 });
-
-// editor.addEventListener("keydown", (e) => {
-// 	if (e.ctrlKey && e.key === "Enter") {
-// 		e.preventDefault(); // This prevents the browser's default Ctrl+Enter behavior, if any.
-// 		runBtn.click();
-// 	}
-// });
 
 clrEditorBtn.addEventListener("click", () => {
 	editor.dispatch({

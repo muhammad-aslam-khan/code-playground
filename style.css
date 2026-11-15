@@ -72,20 +72,30 @@ body {
 	min-height: 0;
 	display: flex;
 }
-
-/* Left and right panels */
-#left-panel,
-#right-panel {
-	min-width: 0;
-	min-height: 0;
-	display: flex;
-	width: 50%;
+#workspace:has(#right-panel.hidden) #left-panel {
+	width: auto;
 	flex: 1;
 }
 
+/* Left and right panels */
+#left-panel {
+	width: 50%;
+	flex: 0 0 auto;
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+}
+
 #right-panel {
-	/* flex: 1; */
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	display: flex;
 	flex-direction: column;
+}
+#right-panel:has(#console-panel.hidden) #preview-panel {
+	flex: 1 1 0 !important;
+	height: auto !important;
 }
 
 /* Explorer and editor */
@@ -100,23 +110,94 @@ body {
 #editor-panel {
 	flex: 1;
 	min-width: 0;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
+}
+#editor-welcome {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: #888;
+	text-align: center;
+	padding: 20px;
+}
+
+#editor-welcome h2 {
+	margin-bottom: 8px;
+}
+
+#editor-welcome p {
+	margin-top: 0;
 }
 
 /* Editor tabs */
 #editor-tabs {
 	display: flex;
-	flex-shrink: 0;
-	gap: 4px;
-	padding: 6px;
+	align-items: center;
+	gap: 2px;
+	padding: 5px 6px 0;
 	border-bottom: 1px solid #ccc;
+	overflow-x: auto;
+}
+
+.editor-tab {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+	border: 1px solid transparent;
+	border-bottom: none;
+	border-radius: 5px 5px 0 0;
+	background: #e9e9e9;
+	color: #555;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.editor-tab:hover {
+	background: #ddd;
+}
+
+.editor-tab.active {
+	background: #fff;
+	color: #1a4f85;
+	border-color: #ccc;
+	font-weight: 600;
+}
+
+.close-tab-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	color: #777;
+	cursor: pointer;
+	font-size: 17px;
+	line-height: 1;
+}
+
+.close-tab-btn:hover {
+	background: #ccc;
+	color: #c00;
 }
 
 #code-editor {
 	flex: 1;
 	min-height: 0;
-	overflow: auto;
+	min-width: 0;
+	overflow: hidden;
+}
+
+#code-editor .cm-editor {
+	height: 100%;
 }
 
 /* Preview and console */
