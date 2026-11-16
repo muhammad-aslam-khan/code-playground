@@ -106,6 +106,53 @@ const browserApiCompletions = {
 	Promise: ["resolve", "reject", "all", "allSettled", "race", "any"],
 };
 
+function getLocalCompletions(doc) {
+	const code = doc.toString();
+
+	const declarationPattern =
+		/\b(const|let|var)\s+([A-Za-z_$][\w$]*)|\bfunction\s+([A-Za-z_$][\w$]*)|\bclass\s+([A-Za-z_$][\w$]*)/g;
+
+	const options = [];
+	const declaredNames = new Set();
+
+	let match;
+
+	while ((match = declarationPattern.exec(code)) !== null) {
+		let name;
+		let type;
+
+		if (match[2]) {
+			name = match[2];
+
+			const afterDeclaration = code.slice(declarationPattern.lastIndex);
+
+			const isArrowFunction =
+				/^\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>/.test(
+					afterDeclaration,
+				);
+
+			type = isArrowFunction ? "function" : "variable";
+		} else if (match[3]) {
+			name = match[3];
+			type = "function";
+		} else {
+			name = match[4];
+			type = "class";
+		}
+
+		if (!declaredNames.has(name)) {
+			declaredNames.add(name);
+
+			options.push({
+				label: name,
+				type,
+			});
+		}
+	}
+
+	return options;
+}
+
 function browserCompletion(context) {
 	const beforeCursor = context.state.doc.sliceString(0, context.pos);
 
@@ -134,19 +181,23 @@ function browserCompletion(context) {
 		};
 	}
 
-	// Suggestions for global object names
+	// Suggestions for global objects and local declarations
 	const globalMatch = context.matchBefore(/[\w$]+/);
 
 	if (!globalMatch) return null;
 
 	const globalObjects = Object.keys(browserApiCompletions);
 
+	const localOptions = getLocalCompletions(context.state.doc);
+
+	const globalOptions = globalObjects.map((item) => ({
+		label: item,
+		type: "variable",
+	}));
+
 	return {
 		from: globalMatch.from,
-		options: globalObjects.map((item) => ({
-			label: item,
-			type: "variable",
-		})),
+		options: [...localOptions, ...globalOptions],
 		validFor: /^[\w$]*$/,
 	};
 }
