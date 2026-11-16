@@ -5,6 +5,11 @@ import { createEditorTab, removeEditorTab, getLastOpenTab } from "./tabs.js";
 
 let activeFilePath = null;
 
+// This allows other modules to access the currently selected file without directly accessing the variable.
+export function getActiveFilePath() {
+	return activeFilePath;
+}
+
 // Open a file
 export function openFile(filePath) {
 	// Validate file

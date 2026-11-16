@@ -1,26 +1,81 @@
-#code-output {
-	white-space: pre-wrap;
+/* Complete console panel */
+#console-panel {
+	background-color: #1d3030;
+	color: #d5e1df;
+	border: 1px solid #354747;
+	border-radius: 5px;
+	overflow: hidden;
 }
 
+/* Console heading */
+#console-header {
+	background-color: #263b3b;
+	color: #dce8e5;
+	border-bottom: 1px solid #354747;
+}
+
+/* Console heading text */
+#console-header h3 {
+	color: #dce8e5;
+	margin: 4px 0;
+	padding-left: 8px;
+}
+
+/* Clear button */
+#console-header button {
+	background-color: #3b5553;
+	color: #e0eae7;
+	border: 1px solid #4a6562;
+}
+
+/* Console output area */
+#code-output {
+	background-color: transparent;
+	color: #d5e1df;
+	white-space: pre-wrap;
+	font-family: "JetBrains Mono", monospace;
+	font-size: 12px;
+	box-sizing: border-box;
+}
+
+/* Individual console messages */
 .console-line {
-	padding: 3px 8px;
-	border-bottom: 1px solid #333;
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	padding: 2px 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	font-family: "JetBrains Mono", monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	background: transparent;
+}
+
+.console-message {
+	flex: 1;
+	min-width: 0;
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 }
 
+.console-location {
+	flex-shrink: 0;
+	margin-left: auto;
+	color: #7fa6b9;
+	font-size: 11px;
+	white-space: nowrap;
+}
+
 .console-line.log {
-	/* color: #e0e0e0; */
+	color: #d5e1df;
 }
 
 .console-line.warn {
-	color: #f0b429;
-	background-color: #332b16;
+	color: #e0b45c;
 }
 
 .console-line.error {
-	color: #ff6b6b;
-	background-color: #351b1b;
+	color: #e47777;
 }
 
 /* Basic page layout */

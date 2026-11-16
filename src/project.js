@@ -37,20 +37,9 @@ export const projectFiles = {
 	"js/script.js": {
 		name: "script.js",
 		type: "file",
-		content: `console.log("Hello from the project!");
-
-console.warn("This is a warning!");
-
-console.error("This is an error!");
-
-console.log({
-    name: "Code Playground",
-    version: 1,
-});
-
-console.log(
-    Promise.resolve("Promise completed!")
-);`,
+		content: `console.log("First message");
+console.warn("Warning message");
+console.error("Error message");`,
 	},
 
 	"js/utils.js": {

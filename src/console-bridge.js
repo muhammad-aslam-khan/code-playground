@@ -6,12 +6,39 @@
  *--------------------------------------------------------------------------------------------*/
 
 export function installConsoleBridge() {
-	function sendConsoleMessage(method, args) {
+	function getSourceLocation(callerFunction) {
+		const error = new Error();
+
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(error, callerFunction);
+		}
+
+		const stackLine = error.stack?.split("\n")[1];
+
+		if (!stackLine) return null;
+
+		const isStandalone = stackLine.includes("at eval (");
+
+		const match = stackLine.match(/at (?:eval \()?(.+?):(\d+):(\d+)\)?$/);
+
+		if (!match) return null;
+
+		return {
+			file: match[1].split("/").pop(),
+			line: Number(match[2]) - (isStandalone ? 2 : 0),
+			column: Number(match[3]),
+		};
+	}
+
+	function sendConsoleMessage(method, args, callerFunction) {
+		const location = getSourceLocation(callerFunction);
+
 		window.parent.postMessage(
 			{
 				type: "CONSOLE_OUTPUT",
 				method,
 				args,
+				location,
 			},
 			"*",
 		);
@@ -88,12 +115,19 @@ export function installConsoleBridge() {
 		}
 	}
 
-	console.log = (...args) =>
-		sendConsoleMessage("log", args.map(serializeValue));
+	function consoleLog(...args) {
+		sendConsoleMessage("log", args.map(serializeValue), consoleLog);
+	}
 
-	console.warn = (...args) =>
-		sendConsoleMessage("warn", args.map(serializeValue));
+	function consoleWarn(...args) {
+		sendConsoleMessage("warn", args.map(serializeValue), consoleWarn);
+	}
 
-	console.error = (...args) =>
-		sendConsoleMessage("error", args.map(serializeValue));
+	function consoleError(...args) {
+		sendConsoleMessage("error", args.map(serializeValue), consoleError);
+	}
+
+	console.log = consoleLog;
+	console.warn = consoleWarn;
+	console.error = consoleError;
 }

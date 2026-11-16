@@ -120,7 +120,7 @@ export function updatePreview() {
 			}
 		}
 
-		inlineScript.textContent = file.content;
+		inlineScript.textContent = `${file.content}\n//# sourceURL=${filePath}`;
 
 		script.replaceWith(inlineScript);
 	});

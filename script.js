@@ -4,6 +4,7 @@ import "./src/layout.js";
 import "./src/explorer.js";
 import { updatePreview } from "./src/preview.js";
 import { installConsoleBridge } from "./src/console-bridge.js";
+import { getActiveFilePath } from "./src/files.js";
 
 // updatePreview(); // Renders the preview if we have code in our project when page loads
 // console.log(projectFiles);
@@ -53,6 +54,7 @@ runBtn.addEventListener("click", () => {
 			{
 				type: "RUN_CODE",
 				code: userCode,
+				fileName: getActiveFilePath() || "script.js",
 			},
 			"*",
 		);
@@ -61,40 +63,6 @@ runBtn.addEventListener("click", () => {
 		updatePreview();
 	}
 });
-
-/*// runBtn.addEventListener("click", () => {
-// 	codeOutput.textContent = "";
-
-// 	updatePreview(); // Rendering the preview
-
-// 	// // const userCode = editor.value;
-// 	// const userCode = editor.state.doc.toString();
-
-// 	// // First, check JavaScript syntax
-// 	// try {
-// 	// 	acorn.parse(userCode, {
-// 	// 		ecmaVersion: "latest",
-// 	// 		locations: true,
-// 	// 	});
-// 	// } catch (error) {
-// 	// 	const outputLine = document.createElement("div");
-// 	// 	outputLine.classList.add("console-line", "error");
-
-// 	// 	outputLine.textContent = `SyntaxError: ${error.message} (Line ${error.loc.line}, Column ${error.loc.column + 1})`;
-// 	// 	codeOutput.appendChild(outputLine);
-
-// 	// 	return;
-// 	// }
-
-// 	// jsFrame.contentWindow.postMessage(
-// 	// 	{
-// 	// 		type: "RUN_CODE",
-// 	// 		code: userCode,
-// 	// 	},
-// 	// 	"*",
-// 	// );
-// });
-*/
 
 // Our main web page (parent) message eventhandler
 window.addEventListener("message", (e) => {
@@ -131,9 +99,22 @@ window.addEventListener("message", (e) => {
 		const output = message.args.map((val) => formatValue(val)).join(" ");
 
 		const outputLine = document.createElement("div");
-
 		outputLine.classList.add("console-line", message.method);
-		outputLine.textContent = output;
+
+		const messageText = document.createElement("span");
+		messageText.classList.add("console-message");
+		messageText.textContent = output;
+
+		outputLine.appendChild(messageText);
+
+		if (message.location) {
+			const sourceLocation = document.createElement("span");
+			sourceLocation.classList.add("console-location");
+
+			sourceLocation.textContent = `${message.location.file}:${message.location.line}`;
+
+			outputLine.appendChild(sourceLocation);
+		}
 
 		codeOutput.appendChild(outputLine);
 
