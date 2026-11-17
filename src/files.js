@@ -1,4 +1,13 @@
-import { projectFiles } from "./project.js";
+/*--------------------------------------------------
+This module currently manages:
+- Opening files.
+- Closing files.
+- Switching between editor tabs.
+- Saving the active editor contents into projectFiles.
+- Maintaining the active file path.
+---------------------------------------------------*/
+
+import { saveCurrentProject, projectFiles } from "./project.js";
 import { editor, setEditorLanguage } from "./editor.js";
 
 import { createEditorTab, removeEditorTab, getLastOpenTab } from "./tabs.js";
@@ -105,3 +114,18 @@ export function saveActiveFile() {
 
 	projectFiles[activeFilePath].content = editor.state.doc.toString();
 }
+
+let saveTimeout;
+document.addEventListener("editor-content-changed", () => {
+	saveActiveFile();
+
+	clearTimeout(saveTimeout);
+
+	saveTimeout = setTimeout(async () => {
+		try {
+			await saveCurrentProject();
+		} catch (error) {
+			console.error("Automatic save failed:", error);
+		}
+	}, 700);
+});

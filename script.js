@@ -1,13 +1,16 @@
 import { editor } from "./src/editor.js";
-import { projectFiles } from "./src/project.js";
+import { initializeProject, projectFiles } from "./src/project.js";
 import "./src/layout.js";
-import "./src/explorer.js";
 import { updatePreview } from "./src/preview.js";
 import { installConsoleBridge } from "./src/console-bridge.js";
 import { getActiveFilePath } from "./src/files.js";
 
-// updatePreview(); // Renders the preview if we have code in our project when page loads
-// console.log(projectFiles);
+// before initializing the Explorer or attaching the application's
+// event handlers, wait for the project to load
+await initializeProject();
+
+// Initialize Explorer only after project data is ready
+await import("./src/explorer.js");
 
 const executionMode = document.querySelector("#execution-mode");
 const runBtn = document.querySelector("#run-btn");
@@ -59,6 +62,9 @@ runBtn.addEventListener("click", () => {
 			"*",
 		);
 	} else if (executionMode.value === "project") {
+		console.log("Web Project mode reached");
+		console.log("Project files:", projectFiles);
+		console.log("HTML file:", projectFiles["index.html"]);
 		// Render the complete Web Project
 		updatePreview();
 	}

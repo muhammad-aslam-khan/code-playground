@@ -247,6 +247,14 @@ export const editor = new EditorView({
 					"'JetBrains Mono', Consolas, 'Courier New', monospace",
 			},
 		}),
+
+		EditorView.updateListener.of((update) => {
+			if (update.docChanged) {
+				document.dispatchEvent(
+					new CustomEvent("editor-content-changed"),
+				);
+			}
+		}),
 	],
 	parent: document.querySelector("#code-editor"),
 });
