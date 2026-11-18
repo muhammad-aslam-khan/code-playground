@@ -67,6 +67,9 @@ console.error("Error message");`,
 // Currently active project
 export const projectFiles = {};
 
+// Stores project folder paths, including empty folders
+export const projectFolders = new Set(["css", "js"]);
+
 // Stores project metadata
 export const currentProject = {
 	id: "default-project",
@@ -86,6 +89,30 @@ export async function initializeProject() {
 			currentProject.updatedAt = savedProject.updatedAt;
 
 			Object.assign(projectFiles, savedProject.files);
+
+			// Restore saved folders
+			projectFolders.clear();
+
+			if (savedProject.folders) {
+				savedProject.folders.forEach((folder) => {
+					projectFolders.add(folder);
+				});
+			}
+
+			// Recover parent folders from existing file paths
+			Object.keys(projectFiles).forEach((filePath) => {
+				const parts = filePath.split("/");
+
+				parts.pop();
+
+				let folderPath = "";
+
+				parts.forEach((part) => {
+					folderPath = folderPath ? `${folderPath}/${part}` : part;
+
+					projectFolders.add(folderPath);
+				});
+			});
 		} else {
 			Object.assign(projectFiles, structuredClone(defaultProjectFiles));
 
@@ -113,8 +140,60 @@ export async function saveCurrentProject() {
 	await saveProject({
 		...currentProject,
 		files: projectFiles,
+		folders: [...projectFolders],
 	});
 }
 
+// Ensure all parent folders exist
+function ensureParentFolders(folderPath) {
+	if (!folderPath) return;
+
+	const parts = folderPath.split("/");
+	let currentPath = "";
+
+	parts.forEach((part) => {
+		currentPath = currentPath ? `${currentPath}/${part}` : part;
+
+		projectFolders.add(currentPath);
+	});
+}
+
+// Add a new file
+export async function addFile(filePath) {
+	if (projectFiles[filePath] || projectFolders.has(filePath)) {
+		throw new Error("A file or folder with this name already exists.");
+	}
+
+	const parts = filePath.split("/");
+	const fileName = parts.pop();
+	const parentPath = parts.join("/");
+
+	ensureParentFolders(parentPath);
+
+	projectFiles[filePath] = {
+		name: fileName,
+		type: "file",
+		content: "",
+	};
+
+	await saveCurrentProject();
+}
+
+// Add a new folder
+export async function addFolder(folderPath) {
+	if (projectFiles[folderPath] || projectFolders.has(folderPath)) {
+		throw new Error("A file or folder with this name already exists.");
+	}
+
+	const parts = folderPath.split("/");
+	const folderName = parts.pop();
+	const parentPath = parts.join("/");
+
+	ensureParentFolders(parentPath);
+
+	projectFolders.add(folderPath);
+
+	await saveCurrentProject();
+}
 /*---------------------------------
 ---------------------------------*/

@@ -72,76 +72,30 @@
 					<div id="explorer-header">
 						<h3>Explorer</h3>
 						<div id="explorer-actions">
-							<button type="button" title="New File">+</button>
-							<button type="button" title="New Folder">📁</button>
+							<button
+								id="new-file-btn"
+								type="button"
+								title="New File"
+							>
+								+
+							</button>
+							<button
+								id="new-folder-btn"
+								type="button"
+								title="New Folder"
+							>
+								📁
+							</button>
 						</div>
 					</div>
 
-					<div id="file-tree">
-						<div class="project-root">
-							<div class="tree-item folder" data-folder="root">
-								<span class="folder-arrow">▾</span>
-								<span>MAK Playground</span>
-							</div>
-
-							<div class="folder-contents">
-								<div
-									class="tree-item file"
-									data-file="index.html"
-								>
-									<span>📄 index.html</span>
-								</div>
-
-								<div class="tree-item folder" data-folder="css">
-									<span class="folder-arrow">▾</span>
-									<span>css</span>
-								</div>
-
-								<div class="folder-contents">
-									<div
-										class="tree-item file"
-										data-file="css/style.css"
-									>
-										<span>📄 style.css</span>
-									</div>
-
-									<div
-										class="tree-item file"
-										data-file="css/responsive.css"
-									>
-										<span>📄 responsive.css</span>
-									</div>
-								</div>
-
-								<div class="tree-item folder" data-folder="js">
-									<span class="folder-arrow">▾</span>
-									<span>js</span>
-								</div>
-
-								<div class="folder-contents">
-									<div
-										class="tree-item file"
-										data-file="js/script.js"
-									>
-										<span>📄 script.js</span>
-									</div>
-
-									<div
-										class="tree-item file"
-										data-file="js/utils.js"
-									>
-										<span>📄 utils.js</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+					<div id="file-tree"></div>
 				</aside>
 
 				<!-- Explorer Divider -->
 				<div id="explorer-divider"></div>
 
-				<!-- Editor workspace -->
+				<!-- Editor -->
 				<section id="editor-panel">
 					<div id="editor-tabs"></div>
 
@@ -154,12 +108,11 @@
 				</section>
 			</section>
 
-			<!-- Divider -->
+			<!-- Editor / Preview Divider -->
 			<div id="main-divider"></div>
 
-			<!-- Right workspace -->
+			<!-- Right workspace: Preview only -->
 			<section id="right-panel">
-				<!-- Preview -->
 				<section id="preview-panel">
 					<h3>Preview</h3>
 					<iframe
@@ -168,23 +121,21 @@
 						sandbox="allow-scripts"
 					></iframe>
 				</section>
-
-				<!-- Divider -->
-				<div id="preview-console-divider"></div>
-
-				<!-- Console -->
-				<section id="console-panel">
-					<div id="console-header">
-						<h3>Console Output</h3>
-						<button id="clr-console-btn" type="button">
-							Clear
-						</button>
-					</div>
-
-					<div id="code-output"></div>
-				</section>
 			</section>
 		</main>
+
+		<!-- Workspace / Console Divider -->
+		<div id="workspace-console-divider"></div>
+
+		<!-- Bottom Console -->
+		<section id="console-panel">
+			<div id="console-header">
+				<h3>Console Output</h3>
+				<button id="clr-console-btn" type="button">Clear</button>
+			</div>
+
+			<div id="code-output"></div>
+		</section>
 
 		<iframe
 			id="execution-frame"

@@ -80,3 +80,8 @@
 	background: #d6e8ff;
 	color: #1a4f85;
 }
+
+.tree-item.folder.selected {
+	background-color: #d6e8ff;
+	color: #1a4f85;
+}

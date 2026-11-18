@@ -1,32 +1,32 @@
 /* Complete console panel */
-#console-panel {
+/* #console-panel {
 	background-color: #1d3030;
 	color: #d5e1df;
 	border: 1px solid #354747;
 	border-radius: 5px;
 	overflow: hidden;
-}
+} */
 
 /* Console heading */
-#console-header {
+/* #console-header {
 	background-color: #263b3b;
 	color: #dce8e5;
 	border-bottom: 1px solid #354747;
-}
+} */
 
 /* Console heading text */
-#console-header h3 {
+/* #console-header h3 {
 	color: #dce8e5;
 	margin: 4px 0;
 	padding-left: 8px;
-}
+} */
 
 /* Clear button */
-#console-header button {
+/* #console-header button {
 	background-color: #3b5553;
 	color: #e0eae7;
 	border: 1px solid #4a6562;
-}
+} */
 
 /* Console output area */
 #code-output {
@@ -127,6 +127,7 @@ body {
 	min-height: 0;
 	display: flex;
 }
+
 #workspace:has(#right-panel.hidden) #left-panel {
 	width: auto;
 	flex: 1;
@@ -147,10 +148,6 @@ body {
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
-}
-#right-panel:has(#console-panel.hidden) #preview-panel {
-	flex: 1 1 0 !important;
-	height: auto !important;
 }
 
 /* Explorer and editor */
@@ -256,18 +253,12 @@ body {
 }
 
 /* Preview and console */
-#preview-panel,
-#console-panel {
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
-}
-
 #preview-panel {
-	flex: 2;
+	flex: 1;
 	min-height: 0;
 	padding: 10px;
-	border-bottom: 1px solid #ccc;
+	display: flex;
+	flex-direction: column;
 	overflow: hidden;
 }
 
@@ -285,20 +276,53 @@ body {
 	border: 1px solid #ccc;
 }
 
+/* Bottom Console */
 #console-panel {
-	flex: 1;
+	height: clamp(140px, 25vh, 280px);
+	min-height: 100px;
+	flex-shrink: 0;
 	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	background-color: #1d3030;
+	color: #d5e1df;
+	border: 1px solid #354747;
+	border-radius: 5px;
+	overflow: hidden;
 }
 
 #console-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	flex-shrink: 0;
+	background-color: #263b3b;
+	color: #dce8e5;
+	border-bottom: 1px solid #354747;
+}
+
+#console-header h3 {
+	color: #dce8e5;
+	margin: 4px 0;
+	padding-left: 8px;
+}
+
+#console-header button {
+	background-color: #3b5553;
+	color: #e0eae7;
+	border: 1px solid #4a6562;
 }
 
 #code-output {
 	flex: 1;
+	min-height: 0;
 	overflow: auto;
+	background-color: transparent;
+	color: #d5e1df;
+	white-space: pre-wrap;
+	font-family: "JetBrains Mono", monospace;
+	font-size: 12px;
+	box-sizing: border-box;
 }
 
 /* Code & Preview Divider */
@@ -325,14 +349,14 @@ body {
 	background: #999;
 }
 
-/* Preview & Console Divider */
-#preview-console-divider {
+/* Workspace & Console Divider */
+#workspace-console-divider {
 	height: 5px;
 	flex-shrink: 0;
 	background: #ddd;
 	cursor: row-resize;
 }
 
-#preview-console-divider:hover {
+#workspace-console-divider:hover {
 	background: #999;
 }
